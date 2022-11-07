@@ -1,5 +1,4 @@
 import s from './welcome.module.scss'
-import chart from '../../assets/icons/chart.svg'
 import { FunctionalComponent } from 'vue';
 export const Third:FunctionalComponent = () => {
     return  <div class={s.card}>
