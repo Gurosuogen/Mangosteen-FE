@@ -28,10 +28,10 @@ export const routes:RouteRecordRaw[] = [
     },
     { path:'/start', component: StartPage },
     {
-        path: '/items', components: ItemPage,
+        path: '/items', component: ItemPage,
         children: [
-            { path:'',components: ItemList },
-            { path:'create',components: ItemCreate }
-        ] 
+            { path: '', component: ItemList },
+            { path: 'create', component: ItemCreate },
+        ]
     }
 ]
