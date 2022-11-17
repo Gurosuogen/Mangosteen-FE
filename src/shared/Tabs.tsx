@@ -1,23 +1,23 @@
-import { defineComponent,PropType } from 'vue';
-import s from './Tabs.module.scss'
+import { defineComponent, PropType } from 'vue';
+import s from './Tabs.module.scss';
 export const Tabs = defineComponent({
     props: {
         selected: {
             type: String as PropType<string>,
-            required:false,
+            required: false,
         },
         onUpdateSelected: {
-            type: Function as PropType<(name: string)=> void>,
-            required:false,
-        },
+            type: Function as PropType<(name: string) => void>,
+            required: false,
+        }
     },
     setup: (props, context) => {
         return () => {
             const tabs = context.slots.default?.()
-            if(!tabs) return () => null
+            if (!tabs) return () => null
             for (let i = 0; i < tabs.length; i++) {
                 if (tabs[i].type !== Tab) {
-                    throw new Error('<Tab> only accepts <Tab> as children')
+                    throw new Error('<Tabs> only accepts <Tab> as children')
                 }
             }
             return <div class={s.tabs}>
@@ -25,7 +25,7 @@ export const Tabs = defineComponent({
                     {tabs.map(item =>
                         <li class={item.props?.name === props.selected ? s.selected : ''}
                             onClick={() => context.emit('update:selected', item.props?.name)}>
-                                {item.props?.name}
+                            {item.props?.name}
                         </li>)}
                 </ol>
                 <div>
@@ -43,8 +43,8 @@ export const Tab = defineComponent({
         }
     },
     setup: (props, context) => {
-        return () => {
+        return () => (
             <div>{context.slots.default?.()}</div>
-        }
-    } 
+        )
+    }
 })

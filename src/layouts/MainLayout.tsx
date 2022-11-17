@@ -7,7 +7,7 @@ export const MainLayout = defineComponent({
                 <Navbar>{
                     {
                         default: () => context.slots.title?.(),
-                        icon: () => context.slots.icon?.()        
+                        icon: () => context.slots.icon?.(),   
                     }
                 }</Navbar>
                 {context.slots.default?.()}
