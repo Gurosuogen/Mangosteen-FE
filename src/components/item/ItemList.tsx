@@ -1,18 +1,20 @@
 import s from './ItemList.module.scss'
-import { defineComponent,PropType,ref,reactive,watchEffect } from 'vue';
+import { defineComponent, PropType, ref, reactive, watchEffect } from 'vue';
 import { MainLayout } from '../../layouts/MainLayout';
 import { Icon } from '../../shared/Icon';
-import { Tabs,Tab } from '../../shared/Tabs';
+import { Tabs, Tab } from '../../shared/Tabs';
 import { ItemSummary } from './ItemSummary';
 import { Time } from '../../shared/time';
 import { Overlay } from 'vant';
-export const ItemList = defineComponent({  
+import { Form, FormItem } from '../../shared/Form';
+import { Button } from '../../shared/Button';
+export const ItemList = defineComponent({
     setup: (props, context) => {
         const refSelected = ref('本月')
         const time = new Time()
         const customTime = reactive({
-            start: new Time(),
-            end: new Time
+            start: new Time().format(),
+            end: new Time().format()
         })
         const timeList = [
             {
@@ -29,11 +31,15 @@ export const ItemList = defineComponent({
             }
         ]
         const refOverlayVisible = ref(false)
-        watchEffect(() => {            
+        watchEffect(() => {
             if (refSelected.value === '自定义时间') {
                 refOverlayVisible.value = true
             }
         })
+        const onSubmitCustomTime = (e: Event) => {
+            e.preventDefault()
+            refOverlayVisible.value = false
+        }
         return () => (
             <MainLayout>{
                 {
@@ -42,34 +48,39 @@ export const ItemList = defineComponent({
                     default: () => <>
                         <Tabs classPrefix={'customTabs'} v-model:selected={refSelected.value}>
                             <Tab name="本月">
-                                <ItemSummary 
+                                <ItemSummary
                                     startDate={timeList[0].start.format()}
                                     endDate={timeList[0].end.format()} />
                             </Tab>
                             <Tab name="上月">
-                                <ItemSummary 
+                                <ItemSummary
                                     startDate={timeList[1].start.format()}
                                     endDate={timeList[1].end.format()} />
                             </Tab>
                             <Tab name="今年">
-                                <ItemSummary 
+                                <ItemSummary
                                     startDate={timeList[2].start.format()}
                                     endDate={timeList[2].end.format()} />
                             </Tab>
                             <Tab name="自定义时间">
-                                <ItemSummary 
-                                    startDate={customTime.start.format()}
-                                    endDate={customTime.end.format()} />
+                                <ItemSummary
+                                    startDate={customTime.start}
+                                    endDate={customTime.end} />
                             </Tab>
                         </Tabs>
                         <Overlay show={refOverlayVisible.value} class={s.overlay}>
                             <div class={s.overlay_inner}>
                                 <header>请选择时间</header>
                                 <main>
-                                    <form>
-                                        <div></div>
-                                        <div></div>
-                                    </form>
+                                    <Form onSubmit={onSubmitCustomTime}>
+                                        <FormItem label='开始时间' v-model={customTime.start} type='date' />
+                                        <FormItem>
+                                            <div class={s.actions}>
+                                                <button type="button">取消</button>
+                                                <button type="button">确认</button>
+                                            </div>
+                                        </FormItem>
+                                    </Form>
                                 </main>
                             </div>
                         </Overlay>
