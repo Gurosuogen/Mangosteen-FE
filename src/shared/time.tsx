@@ -12,7 +12,7 @@ export class Time {
     constructor(date = new Date()) {
         this.date = date;
     }
-    formate(pattern = 'YYYY-MM-DD') {
+    format(pattern = 'YYYY-MM-DD') {
         const year = this.date.getFullYear()
         const month = this.date.getMonth() + 1
         const day = this.date.getDate()
