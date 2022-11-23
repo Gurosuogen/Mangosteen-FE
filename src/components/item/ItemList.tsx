@@ -6,6 +6,7 @@ import { Tabs, Tab } from '../../shared/Tabs';
 import { ItemSummary } from './ItemSummary';
 import { Time } from '../../shared/time';
 import { Overlay } from 'vant';
+import { OverlayIcon } from '../../shared/Overlay';
 import { Form, FormItem } from '../../shared/Form';
 import { Button } from '../../shared/Button';
 export const ItemList = defineComponent({
@@ -31,22 +32,23 @@ export const ItemList = defineComponent({
             }
         ]
         const refOverlayVisible = ref(false)
-        watchEffect(() => {
-            if (refSelected.value === '自定义时间') {
-                refOverlayVisible.value = true
-            }
-        })
         const onSubmitCustomTime = (e: Event) => {
             e.preventDefault()
             refOverlayVisible.value = false
+        }
+        const onSelect = (value: string) => {
+            if (value === '自定义时间') {
+                refOverlayVisible.value = true
+            }
         }
         return () => (
             <MainLayout>{
                 {
                     title: () => '山竹记账',
-                    icon: () => <Icon name="menu" />,
+                    icon: () => <OverlayIcon />,
                     default: () => <>
-                        <Tabs classPrefix={'customTabs'} v-model:selected={refSelected.value}>
+                        <Tabs classPrefix={'customTabs'} v-model:selected={refSelected.value}
+                        onUpdate:selected={onSelect}>
                             <Tab name="本月">
                                 <ItemSummary
                                     startDate={timeList[0].start.format()}
@@ -68,16 +70,19 @@ export const ItemList = defineComponent({
                                     endDate={customTime.end} />
                             </Tab>
                         </Tabs>
-                        <Overlay show={refOverlayVisible.value} class={s.overlay}>
+                        <Overlay show={refOverlayVisible.value} class={s.overlay} >
                             <div class={s.overlay_inner}>
-                                <header>请选择时间</header>
+                                <header>
+                                    请选择时间
+                                </header>
                                 <main>
                                     <Form onSubmit={onSubmitCustomTime}>
                                         <FormItem label='开始时间' v-model={customTime.start} type='date' />
+                                        <FormItem label='结束时间' v-model={customTime.end} type='date' />
                                         <FormItem>
                                             <div class={s.actions}>
-                                                <button type="button">取消</button>
-                                                <button type="button">确认</button>
+                                                <button type="button" onClick={() => refOverlayVisible.value = false}>取消</button>
+                                                <button type="submit">确认</button>
                                             </div>
                                         </FormItem>
                                     </Form>
