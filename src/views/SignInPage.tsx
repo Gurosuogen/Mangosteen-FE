@@ -27,6 +27,9 @@ export const SignInPage = defineComponent({
                 { key: 'code', type: 'required', message: '必填' }
             ]))
         }
+        const onClickSendValidationCode = () => {
+            console.log('111111')
+        }
         return () => (
             <MainLayout>{
                 {
