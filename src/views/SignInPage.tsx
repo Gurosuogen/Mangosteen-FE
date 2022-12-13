@@ -5,7 +5,7 @@ import { Button } from '../shared/Button';
 import { Form, FormItem } from '../shared/Form';
 import { Icon } from '../shared/Icon';
 import { http } from '../shared/Http';
-import { validate } from '../shared/validate';
+import { hasError, validate } from '../shared/validate';
 import s from './SignInPage.module.scss';
 import { useBool } from '../hooks/useBool';
 
@@ -22,7 +22,8 @@ export const SignInPage = defineComponent({
         })
         const refValidationCode = ref<any>()
         const { ref: refDisabled, toggle, on: disabled, off: enable } = useBool(false)
-        const onSubmit = (e: Event) => {
+        const onSubmit = async (e: Event) => {
+            console.log('submit')
             e.preventDefault()
             Object.assign(errors, {
                 email: [], code: []
@@ -32,6 +33,9 @@ export const SignInPage = defineComponent({
                 { key: 'email', type: 'pattern', regex: /.+@.+/, message: '必须是邮箱地址' },
                 { key: 'code', type: 'required', message: '必填' }
             ]))
+            if(!hasError(errors)){
+                const response = await http.post('/session', formData)
+            }
         }
         const onError = (error: any) => {
             if(error.response.status === 422) {
@@ -59,6 +63,7 @@ export const SignInPage = defineComponent({
                                 <Icon name="mangosteen" class={s.icon}/>
                                 <h1 class={s.appName}>山竹记账</h1>
                             </div>
+                            <div>{JSON.stringify(formData)}</div>
                             <Form onSubmit={onSubmit}>
                                 <FormItem label='邮箱地址' type='text'
                                     placeholder='请输入邮箱，然后点击发送验证码'
@@ -69,7 +74,7 @@ export const SignInPage = defineComponent({
                                     disabled={refDisabled.value}
                                     v-model={formData.code} error={errors.code?.[0]} />
                                 <FormItem  style={{ paddingTop: '96px' }}>
-                                    <Button>登录</Button>
+                                    <Button type="submit">登录</Button>
                                 </FormItem>
                             </Form>
                         </div>
