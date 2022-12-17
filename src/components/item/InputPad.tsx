@@ -1,26 +1,22 @@
-import { defineComponent,PropType,ref } from 'vue';
+import { defineComponent, PropType, ref } from 'vue';
 import { Icon } from '../../shared/Icon';
 import { Time } from '../../shared/time';
-import { DatetimePicker,Popup, NumberKeyboard } from 'vant';
+import { DatetimePicker, Popup, NumberKeyboard } from 'vant';
 import s from './InputPad.module.scss';
 
 export const InputPad = defineComponent({
     props: {
-        name: {
-            type:String as PropType<String>
-        }
+        happenAt: String,
+        amount: Number
     },
     setup: (props, context) => {
-        const now = new Date()
-        const refDate = ref<Date>(now)
-        const refAmount = ref('0')
         const appendText = (n: number | string) => {
             const nString = n.toString()
             const dotIndex = refAmount.value.indexOf('.')
             if (refAmount.value.length >= 13) {
                 return
             }
-            if (dotIndex >=0 && refAmount.value.length - dotIndex > 2) {
+            if (dotIndex >= 0 && refAmount.value.length - dotIndex > 2) {
                 return
             }
             if (nString === '.') {
@@ -33,15 +29,15 @@ export const InputPad = defineComponent({
                         return
                     }
                 }
-            }else {
+            } else {
                 if (refAmount.value === '0') {
-                    refAmount.value = ''                    
+                    refAmount.value = ''
                 }
             }
             refAmount.value += n.toString()
         }
         const buttons = [
-            {text: '1', onClick: () => { appendText(1) } },
+            { text: '1', onClick: () => { appendText(1) } },
             { text: '2', onClick: () => { appendText(2) } },
             { text: '3', onClick: () => { appendText(3) } },
             { text: '4', onClick: () => { appendText(4) } },
@@ -53,20 +49,28 @@ export const InputPad = defineComponent({
             { text: '.', onClick: () => { appendText('.') } },
             { text: '0', onClick: () => { appendText(0) } },
             { text: '清空', onClick: () => { refAmount.value = '0' } },
-            { text: '提交', onClick: () => { } },
+            { 
+                text: '提交',
+                onClick: () => context.emit('update:amount',
+                    parseFloat(refAmount.value) * 100)
+            },
         ]
         const refDatePickerVisible = ref(false)
-        const showDatePicker =() => refDatePickerVisible.value = true
-        const hideDatePicker =() => refDatePickerVisible.value = false
-        const setDate = (date: Date) => { refDate.value = date; hideDatePicker() }
+        const showDatePicker = () => refDatePickerVisible.value = true
+        const hideDatePicker = () => refDatePickerVisible.value = false
+        const setDate = (date: Date) => {
+            context.emit('update:happenAt', date.toISOString());
+            hideDatePicker()
+        }
+        const refAmount = ref(props.amount ? (props.amount / 100).toString() : '0')
         return () => <>
             <div class={s.dateAndAmount}>
                 <span class={s.date}>
-                    <Icon name="date" class={s.icon}/>
+                    <Icon name="date" class={s.icon} />
                     <span>
-                        <span onClick={showDatePicker}>{new Time(refDate.value).format()}</span>
+                        <span onClick={showDatePicker}>{new Time(props.happenAt).format()}</span>
                         <Popup position='bottom' v-model:show={refDatePickerVisible.value}>
-                            <DatetimePicker v-model={refDate.value} type="date" title="选择年月日"
+                            <DatetimePicker v-model={props.happenAt} type="date" title="选择年月日"
                                 onConfirm={setDate} onCancel={hideDatePicker} />
                         </Popup>
                     </span>
