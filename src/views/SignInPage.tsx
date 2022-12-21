@@ -10,6 +10,7 @@ import { http } from '../shared/Http';
 import { Icon } from '../shared/Icon';
 import { refreshMe } from '../shared/me';
 import { hasError, validate } from '../shared/validate';
+import { BackIcon } from '../shared/BackIcon';
 import s from './SignInPage.module.scss';
 export const SignInPage = defineComponent({
     setup: (props, context) => {
@@ -67,7 +68,7 @@ export const SignInPage = defineComponent({
             <MainLayout>{
                 {
                     title: () => '登录',
-                    icon: () => <Icon name="left" />,
+                    icon: () => <BackIcon />,
                     default: () => (
                         <div class={s.wrapper}>
                             <div class={s.logo}>
