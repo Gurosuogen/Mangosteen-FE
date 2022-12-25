@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { mockItemIndex,mockTagEdit,mockItemCreate, mockSession, mockTagIndex, mockTagShow } from "../mock/mock";
+import { mockItemIndexBalance, mockItemIndex, mockTagEdit, mockItemCreate, mockSession, mockTagIndex, mockTagShow } from "../mock/mock";
 
 type GetConfig = Omit<AxiosRequestConfig, 'params' | 'url' | 'method'>
 type PostConfig = Omit<AxiosRequestConfig, 'url' | 'data' | 'method'>
@@ -52,7 +52,10 @@ const mock = (response: AxiosResponse) => {
         case 'itemIndex':
             [response.status, response.data] = mockItemIndex(response.config)
             return true
-        }
+        case 'itemIndexBalance':
+            [response.status, response.data] = mockItemIndexBalance(response.config)
+            return true
+    }
     return false
 }
 
@@ -68,19 +71,19 @@ http.instance.interceptors.request.use(config => {
 
 http.instance.interceptors.response.use((response) => {
     mock(response)
-    if(response.status >= 400) {
+    if (response.status >= 400) {
         throw { response }
     } else {
         return response
     }
-},(error) => {
+}, (error) => {
     mock(error.response)
-    if(error.response.status >= 400) {
+    if (error.response.status >= 400) {
         throw error.response
     }
 })
 http.instance.interceptors.response.use(
-    response => { return response},
+    response => { return response },
     error => {
         if (error.response) {
             const axiosError = error as AxiosError
