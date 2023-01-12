@@ -39,7 +39,7 @@ export const SignInPage = defineComponent({
             if (!hasError(errors)) {
                 const response = await http.post<{ jwt: string }>('/session', formData,
                 //mock登陆
-                {params: { _mock: 'session' }}
+                { _mock: 'session',_autoLoading: true }
                 ).catch(onError)
                 console.log(response)
                 localStorage.setItem('jwt', response.data.jwt)
