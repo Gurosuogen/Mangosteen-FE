@@ -41,9 +41,8 @@ export const SignInPage = defineComponent({
                 //mock登陆
                 { _mock: 'session',_autoLoading: true }
                 ).catch(onError)
-                console.log(response)
                 localStorage.setItem('jwt', response.data.jwt)
-                // router.push('/sign_in?return_to='+ encodeURIComponent(route.fullPath))
+                //router.push('/sign_in?return_to='+ encodeURIComponent(route.fullPath))
                 const returnTo = route.query.return_to?.toString()
                 refreshMe()
                 router.push(returnTo || '/')
